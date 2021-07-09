@@ -1,6 +1,6 @@
 {
   "name": "client-ui-toolkit",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Client UI Toolkit containing commonly usable components",
   "main": "dist/index.js",
   "scripts": {
