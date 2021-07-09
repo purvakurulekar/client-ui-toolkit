@@ -1,0 +1,42 @@
+.loader {
+    position: absolute;
+    top: 0;
+    right: 20px;
+    display: flex;
+    flex-flow: row;
+}
+
+.loader-bar {
+    margin-right: 4px;
+    background-color: #f8971d;
+    border: 1px SOLID #d7d7d7;
+    border-left: none;
+    border-top: none;
+    flex: 1 1;
+    animation-name: animate-bar;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+
+.loader-bar1 {
+    animation-delay: 0ms;
+}
+
+.loader-bar2 {
+    animation-delay: 250ms;
+}
+
+.loader-bar3 {
+    animation-delay: 500ms;
+}
+
+@keyframes animate-bar {
+    0%, 100% {
+        transform: scaleY(1.0);
+    }
+
+    50% {
+        transform: scaleY(0);
+    }
+}
