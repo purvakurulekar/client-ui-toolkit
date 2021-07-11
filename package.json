@@ -1,10 +1,11 @@
 {
   "name": "client-ui-toolkit",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Client UI Toolkit containing commonly usable components",
-  "main": "dist/index.js",
+  "main": "index.js",
   "scripts": {
     "build": "webpack --progress --config webpack.config.ts",
+    "deploy": "cd dist/ && npm publish",
     "test": "npm run test"
   },
   "repository": {

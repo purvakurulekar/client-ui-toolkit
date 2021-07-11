@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { CSSProperties, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus, faEraser } from "@fortawesome/free-solid-svg-icons";
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
@@ -10,7 +10,7 @@ export default function PCSSniffer() {
     let [isExpanded, setExpanded] = useState(false),
         [logs, setLogs] = useState([]),
         icon: IconDefinition,
-        style: object;
+        style: CSSProperties | undefined = void(0);
 
     useEffect(() => {
         let onLogsChanged = (pcsLogs: Array<ILog>) => {

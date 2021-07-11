@@ -5,13 +5,28 @@ import CopyWebpackPlugin from "copy-webpack-plugin";
 const BUILD_DIR = path.resolve(__dirname, "dist/");
 
 export default {
-    mode: "development",
-    target: ["web","es2020"],
+    mode: "production",
+    target: ["web", "es2020"],
+    experiments: {
+        outputModule: true
+    },
     output: {
         path: BUILD_DIR,
-        filename: "index.js"
+        filename: "index.js",
+        library: {
+            type: "module"
+            // name: "CiCAPI",
+            // type: "umd",
+            // umdNamedDefine: true,
+            // export: "default"
+        },
+        publicPath: ''
     },
     entry: "./src/index.tsx",
+    externals: {
+        'react': 'react',
+        'react-dom': 'reactDOM'
+    },
     module: {
         rules: [
             {
@@ -76,13 +91,16 @@ export default {
         ],
         extensions: [".tsx", ".ts", ".js"],
     },
-    devtool: "inline-source-map",
+    devtool: "source-map",
     plugins: [
         new CopyWebpackPlugin({
             patterns: [
-            {
-                from: 'src/index.d.ts'
-            }]
+                {
+                    from: 'index.d.ts'
+                },
+                {
+                    from: "package.json"
+                }]
         })
     ]
 };
