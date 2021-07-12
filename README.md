@@ -66,7 +66,7 @@ import { SlidingPanel, SLIDER_DIRECTION } from "client-ui-toolkit";
 | initialDimension? | number | initial dimension of the slider panel
 | configKey? | string | use a custom configuration key to store resized position |
 
-## Enums
+### Enums
 | Key       | values |
 | ---------- |:------|
 | SLIDER_DIRECTION | |
