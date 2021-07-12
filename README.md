@@ -73,7 +73,7 @@ import { SlidingPanel, SLIDER_DIRECTION } from "client-ui-toolkit";
 | | `vertical` |
 | | `horizontal` |
 
-# example usage
+### example usage
 ```
 <SlidingPanel direction={SLIDER_DIRECTION.vertical}>
     <div>Hello World!</div>
