@@ -1,5 +1,5 @@
 import path from "path";
-import webpack from "webpack";
+// import webpack from "webpack";
 import CopyWebpackPlugin from "copy-webpack-plugin";
 
 const BUILD_DIR = path.resolve(__dirname, "dist/");
@@ -7,17 +7,16 @@ const BUILD_DIR = path.resolve(__dirname, "dist/");
 export default {
     mode: "production",
     target: ["web", "es2020"],
-    experiments: {
-        outputModule: true
-    },
+    // experiments: {
+    //     outputModule: true
+    // },
     output: {
         path: BUILD_DIR,
         filename: "index.js",
         library: {
-            type: "module"
-            // name: "CiCAPI",
-            // type: "umd",
-            // umdNamedDefine: true,
+            // type: "module"
+            type: "umd",
+            umdNamedDefine: true,
             // export: "default"
         },
         publicPath: ''
@@ -100,6 +99,9 @@ export default {
                 },
                 {
                     from: "package.json"
+                }, 
+                {
+                    from: "README.md"
                 }]
         })
     ]

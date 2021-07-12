@@ -26,8 +26,8 @@ export default function LogEntry(props: ILogEntryProps) {
     let { src, func, args, tstamp } = props.log,
         argNames: Array<string> | void,
         argsPreview: string,
-        funcToStr: string,
-        logClass: string,
+        funcToStr: string = "",
+        logClass: string = "",
         logDate = new Date(),
         [isShowingArgs, setShowingArgs] = useState(false);
 
@@ -42,19 +42,27 @@ export default function LogEntry(props: ILogEntryProps) {
             funcToStr = window.g_oPCSCallback_Bak[func].toString();
         }
 
-        argNames = funcToStr
-            .substr(0, Math.max(funcToStr.indexOf("\n"), funcToStr.indexOf("{")))
-            .match(/\w+\((.*?)\)/)[1]
-            .split(",")
-            .map(arg => arg.trim())
-            .filter(arg => arg !== "");
+        if (funcToStr) {
+            let funcArgs: string = funcToStr.substr(0, Math.max(funcToStr.indexOf("\n"), funcToStr.indexOf("{"))),
+                matchData: RegExpMatchArray | null = funcArgs.match(/\w+\((.*?)\)/);
+
+            if (matchData !== null) {
+                argNames = matchData[1]
+                    .split(",")
+                    .map(arg => arg.trim())
+                    .filter(arg => arg !== "");
+            }
+        } else {
+            argNames = [];
+        }
+
 
         argNamesCache.set(func, argNames);
     }
 
     // special render cases
     if (func === "synchronizeProducts") {
-        argNames = [].concat(argNames);
+        argNames = [].concat(argNames as []);
         // @ts-ignore
         argNames[0] = args[0];
         // @ts-ignore
@@ -62,7 +70,7 @@ export default function LogEntry(props: ILogEntryProps) {
     }
 
     if (func === "synchronizeDocument") {
-        argNames = [].concat(argNames);
+        argNames = [].concat(argNames as []);
         // @ts-ignore
         argNames[0] = args[0];
     }

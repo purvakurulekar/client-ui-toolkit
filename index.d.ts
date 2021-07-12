@@ -28,7 +28,7 @@ interface IOverlayProps {
 }
 
 export function SlidingPanel(props:ISlidingPanelProps): JSX.Element;
-export function Header(props:IHeaderProps): JSX.Element;
+export function TestAppHeader(props:IHeaderProps): JSX.Element;
 export function Loader(props: ILoaderProps): JSX.Element;
 export function Overlay(props: IOverlayProps): JSX.Element;
 export function PCSSniffer(): JSX.Element;
