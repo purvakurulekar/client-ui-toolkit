@@ -19,7 +19,7 @@
     "Components"
   ],
   "publishConfig": {
-    "registry": "http://cic-client-npmregistry-dev-ci.centralus.azurecontainer.io:4873/"
+    "registry": "http://cic-npmregistry-dev-ci.centralus.azurecontainer.io:4873/"
   },
   "author": "Thomas Lanteigne",
   "license": "ISC",
