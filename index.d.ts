@@ -71,7 +71,7 @@ declare class Utils {
     static radToDeg(rad: number): number;
     static eulerToQuaternion(eulerAngleInDeg: ILCVector3): IQuaternion;// pitch (x), roll (y), yaw (z)
     static genGUID(): string;
-    static genUUID(size: number = 8): string;
+    static genUUID(size: number): string;
     static cloneObj(object: Object): Object;
     static millisToString(timeInMillis: number): string;
 }
