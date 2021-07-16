@@ -22,6 +22,13 @@ interface IFooterProps {
     onSettingsToggled: Function
 }
 
+interface ISettingsPanelProps {
+    label?: string,
+    path?: string,
+    value?: string,
+    onChange?: Function,
+    onClose?: Function
+}
 
 interface ILoaderProps {
     width?:number,
@@ -79,6 +86,8 @@ declare class Utils {
 export function SlidingPanel(props:ISlidingPanelProps): JSX.Element;
 export function TestAppHeader(props:IHeaderProps): JSX.Element;
 export function TestAppFooter(props:IFooterProps): JSX.Element;
+export function DataSourceControl(): JSX.Element;
+export function SettingsPanel(props: ISettingsPanelProps): JSX.Element;
 export function Loader(props: ILoaderProps): JSX.Element;
 export function Overlay(props: IOverlayProps): JSX.Element;
 export function PCSSniffer(): JSX.Element;
