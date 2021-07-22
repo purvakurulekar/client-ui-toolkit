@@ -25,17 +25,32 @@ type configEntry = Array<string | number | boolean | void>;
 //=============================================================================
 export default function SettingsPanel(props: ISettingsPanelProps) {
     let [cic3Config, setCiC3Config] = useState(new Map(CiCAPI.getConfig("cic3") as ConfigMap)),
+        [moobleConfig, setMoobleConfig] = useState(new Map(CiCAPI.getConfig("mooble") as ConfigMap)),
         [cic2Config, setCiC2Config] = useState(new Map(CiCAPI.getConfig("cic2") as ConfigMap));
 
     async function handleResetConfigs() {
-        await CiCAPI.resetConfigs(true);
+        await CiCAPI.resetConfigs(void (0), true);
         setCiC3Config(new Map(CiCAPI.getConfig("cic3") as ConfigMap));
+        setMoobleConfig(new Map(CiCAPI.getConfig("mooble") as ConfigMap));
         setCiC2Config(new Map(CiCAPI.getConfig("cic2") as ConfigMap));
     }
 
     async function handleApplyConfigs() {
-        CiCAPI.setConfig("cic3", cic3Config);
-        CiCAPI.setConfig("cic2", cic2Config);
+        let cic2ConfigObj: ICiC2Config,
+            cic3ConfigObj: ICiC3Config,
+            moobleConfigObj: IMoobleConfig;
+
+        cic2ConfigObj = Object.assign({}, ...Array.from(cic2Config.keys()).map((key: string) => { return { [key]: cic2Config.get(key) } }));
+        cic3ConfigObj = Object.assign({}, ...Array.from(cic3Config.keys()).map((key: string) => { return { [key]: cic3Config.get(key) } }));
+        moobleConfigObj = Object.assign({}, ...Array.from(moobleConfig.keys()).map((key: string) => { return { [key]: moobleConfig.get(key) } }));
+
+        CiCAPI.resetConfigs({
+            version: CiCAPI.getConfig("version") as number,
+            cic2: cic2ConfigObj,
+            cic3: cic3ConfigObj,
+            mooble: moobleConfigObj
+        });
+
         props.onClose();
     }
 
@@ -47,6 +62,7 @@ export default function SettingsPanel(props: ISettingsPanelProps) {
             <button className="settings-panel-close-btn" onClick={() => props.onClose()}><FontAwesomeIcon icon={faWindowClose} /></button>
             <div className="settings-panel-content">
                 <SettingsPanelGroup label="CiC3" configPath="cic3" configMap={cic3Config} />
+                <SettingsPanelGroup label="Mooble" configPath="mooble" configMap={moobleConfig} />
                 <SettingsPanelGroup label="CiC2" configPath="cic2" configMap={cic2Config} />
             </div>
             <div className="settings-panel-btn-container">
@@ -104,7 +120,7 @@ function SettingsEntry(props: ISettingsEntryProps) {
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
         props.onChange(props.label, e.target.value);
     }
-    
+
     return (
         <div className="settings-panel-config-entry">
             <div className="settings-panel-config-entry-label">{props.label}</div>
