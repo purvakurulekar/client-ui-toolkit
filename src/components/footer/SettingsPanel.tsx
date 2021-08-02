@@ -83,18 +83,34 @@ function SettingsPanelGroup(props: ISettingsPanelGroupProps) {
         forceUpdate({} as any);
     }
 
-    if (props.configPath === "cic3") {
+    if (props.configPath === "cic3" || props.configPath === "mooble") {
         let priorityEntries: Array<configEntry> = [],
             noPriorityEntries: Array<configEntry> = [];
 
         configEntries.forEach((entry: configEntry) => {
-            let entryName: string = entry[0] as string;
-            if (entryName === "client") {
-                priorityEntries[0] = entry;
+            let entryName: string = entry[0] as string,
+                priorityIndex: number = -1;
+
+            /**
+             * Base URLs First (BaseAPI + Geometries)
+             * Rel Urls Second
+             */
+            if (entryName === "baseApiUrl") {
+                priorityIndex = 0
+            } else if (entryName === "geometriesApiUrl") {
+                priorityIndex = 1
+            }
+            else if (entryName === "client") {
+                priorityIndex = 2
             } else if (entryName === "region") {
-                priorityEntries[1] = entry;
+                priorityIndex = 3
+
             } else if (entryName === "partnership") {
-                priorityEntries[2] = entry;
+                priorityIndex = 4
+            }
+
+            if (priorityIndex > -1) {
+                priorityEntries[priorityIndex] = entry
             } else {
                 noPriorityEntries.push(entry);
             }
