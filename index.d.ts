@@ -83,6 +83,7 @@ declare class Utils {
     static millisToString(timeInMillis: number): string;
 }
 
+export function importCiCAPI(url: string): Promise<void>;
 export function SlidingPanel(props:ISlidingPanelProps): JSX.Element;
 export function TestAppHeader(props:IHeaderProps): JSX.Element;
 export function TestAppFooter(props:IFooterProps): JSX.Element;

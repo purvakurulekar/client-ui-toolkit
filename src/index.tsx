@@ -9,7 +9,26 @@ import PCSSniffer from "components/pcsSniffer/PCSSniffer";
 import Logger from "Logger";
 import Utils from "Utils";
 
+const CICAPI_FILENAME: string = "cicapi.web.js";
+
+//=============================================================================
+async function importCiCAPI(url: string) {
+    let apiCodeUrl: string = url,
+        response: Response,
+        code: string;
+
+    if (window.location.toString().includes("debug") && !apiCodeUrl.endsWith("/debug/" + CICAPI_FILENAME)) {
+        apiCodeUrl = apiCodeUrl.replace(CICAPI_FILENAME, "debug/" + CICAPI_FILENAME);
+    }
+
+    response = await fetch(apiCodeUrl),
+        code = await response.text();
+    (new Function(code))();
+}
+
+
 export {
+    importCiCAPI,
     Header as TestAppHeader,
     Footer as TestAppFooter,
     DataSourceControl,
