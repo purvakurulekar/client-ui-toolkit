@@ -197,7 +197,7 @@
 .logger-request-list-header,
 .logger-request-entry {
     display: grid;
-    grid-template-columns: 60px 60px auto 200px;
+    grid-template-columns: 40px 40px 560px auto !important;
 }
 
 .logger-request-entry-centered {
@@ -223,6 +223,7 @@
 
 .logger-request-list-header-last {
     border-right: 1px SOLID #d3d3d3;
+    margin-right: 2px;
 }
 
 .logger-request-entry {

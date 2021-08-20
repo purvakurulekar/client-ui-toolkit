@@ -1,7 +1,8 @@
+import Utils from "Utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEraser } from "@fortawesome/free-solid-svg-icons"
-import React, { useState, useCallback, useEffect } from "react";
-import Logger from "../../Logger";
+import React, { useState, useRef, useEffect } from "react";
+import { stat } from "fs";
 
 const
     KIBIBYTES = 1024,
@@ -13,20 +14,29 @@ interface ICacheControlProps {
 
 //=============================================================================
 export default function CacheControl(props: ICacheControlProps) {
-    let [isCacheDisabled, setCacheDisabled] = useState(!CiCAPI.cache.isCacheEnabled()),
-        [, forceUpdateState] = useState(),
+    let [isCacheDisabled, setCacheDisabled] = useState(true),
+        [cacheSize, setCacheSize] = useState(0),
+        networkCount = useRef(CiCAPI.log.getStats().network.entryCount),
         label: string,
         renderedCachedData;
 
-    const onLogsChanged = useCallback(() => {
-        forceUpdateState({} as any);
-    }, []);
-
     useEffect(() => {
+        let onLogsChanged = Utils.debounce(() => {
+            if (isCacheDisabled) {
+                let stats: ILoggerStats = CiCAPI.log.getStats();
+                if (networkCount.current !== stats.network.entryCount) {
+                    networkCount.current = stats.network.entryCount;
+                    setCacheSize(CiCAPI.cache.getCacheSize());
+                }
+            }
+        }, 500);
+
+        setCacheDisabled(!CiCAPI.cache.isCacheEnabled());
+        setCacheSize(CiCAPI.cache.getCacheSize());
         // register to logger changes
-        Logger.registerToChanges(onLogsChanged);
+        CiCAPI.log.registerToChanges(onLogsChanged);
         return () => { // cleanup on onmount
-            Logger.unregisterToChanges(onLogsChanged);
+            CiCAPI.log.unregisterToChanges(onLogsChanged);
         }
     }, []);
 
@@ -40,7 +50,7 @@ export default function CacheControl(props: ICacheControlProps) {
     label = "Disable Cache";
 
     if (!isCacheDisabled) {
-        renderedCachedData = (<CachedData />);
+        renderedCachedData = (<CachedData size={cacheSize} />);
     }
 
     return (
@@ -54,8 +64,12 @@ export default function CacheControl(props: ICacheControlProps) {
     );
 }
 
+interface ICacheDataProps {
+    size: number
+}
+
 //=============================================================================
-function CachedData() {
+function CachedData(props: ICacheDataProps) {
     let [, updateState] = useState(),
         cacheSize: number,
         cacheSizeLabel: string;
@@ -65,7 +79,7 @@ function CachedData() {
         updateState({} as any); // equivalent of force update
     }
 
-    cacheSize = CiCAPI.cache.getCacheSize();
+    cacheSize = props.size;
     if (cacheSize < 1024) {
         // bytes
         cacheSizeLabel = `${cacheSize} Bytes`;

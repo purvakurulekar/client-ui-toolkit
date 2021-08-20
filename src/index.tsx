@@ -6,7 +6,6 @@ import Loader from "components/loader/Loader";
 import Overlay from "components/overlay/Overlay";
 import SlidingPanel, { SLIDER_DIRECTION } from "components/slidingPanel/SlidingPanel";
 import PCSSniffer from "components/pcsSniffer/PCSSniffer";
-import Logger from "Logger";
 import Utils from "Utils";
 
 const CICAPI_FILENAME: string = "cicapi.web.js";
@@ -38,6 +37,5 @@ export {
     SlidingPanel,
     SLIDER_DIRECTION,
     PCSSniffer,
-    Logger,
     Utils
 };

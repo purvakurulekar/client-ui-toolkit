@@ -81,6 +81,7 @@ declare class Utils {
     static genUUID(size: number): string;
     static cloneObj(object: Object): Object;
     static millisToString(timeInMillis: number): string;
+    static debounce(funcToDebounce: Function, debounceTime: number): Function;
 }
 
 export function importCiCAPI(url: string): Promise<void>;

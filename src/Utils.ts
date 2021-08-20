@@ -135,6 +135,15 @@ class Utils {
 
         return timeStr;
     }
+
+    //=============================================================================
+    static debounce(funcToDebounce: Function, debounceTime: number): Function {
+        let timeoutHandle: number;
+        return () => {
+            clearTimeout(timeoutHandle);
+            timeoutHandle = setTimeout(funcToDebounce, debounceTime);
+        }
+    }
 }
 
 export default Utils;

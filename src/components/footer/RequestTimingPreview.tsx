@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import Logger, { LOG_TYPE_ENUM, ILogEntry, IAvgTimings } from "../../Logger";
 import Utils from "../../Utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBookDead, faEraser } from "@fortawesome/free-solid-svg-icons";
@@ -9,29 +8,33 @@ interface IRequestTimingPreviewProps {
 }
 
 export default function RequestTimingPreview(props: IRequestTimingPreviewProps) {
-    let [nbRequests, setNbRequests] = useState(0),
-        lastLogEntry: ILogEntry | null = Logger.getLastLog(LOG_TYPE_ENUM.network),
+    let [stats, setStats] = useState(CiCAPI.log.getStats()),
+        lastLogEntry: IPublicLogEntry | void = CiCAPI.log.listEntries(CiCAPI.log.constants.LOG_TYPE_ENUM.network, 1, 0)[0],
         lastLogTime: string,
-        avgTiming: IAvgTimings = Logger.getAvgLogTimings(LOG_TYPE_ENUM.network);
+        avgTiming: IAvgTimings;
 
-    if (lastLogEntry !== null) {
+    avgTiming = {
+        min: stats.network.minTime,
+        max: stats.network.maxTime,
+        avg: Math.round(stats.network.totalEntryTime / stats.network.entryCount)
+    };
+
+    if (lastLogEntry) {
         lastLogTime = Utils.millisToString(lastLogEntry.time);
     } else {
         lastLogTime = " -- ";
     }
 
-    const onLogsChanged = useCallback(() => {
-        console.log("Logs Changed");
-        let logList = Logger.getLogs();
-        setNbRequests(logList.length);
-    }, []);
-
     useEffect(() => {
-        // register to logger changes
-        Logger.registerToChanges(onLogsChanged);
+        let onLogsChanged = Utils.debounce(() => {
+            console.log("RequestTimingPreview Logs Changed");
+            setStats(CiCAPI.log.getStats());
+        }, 500);
 
+        // register to logger changes
+        CiCAPI.log.registerToChanges(onLogsChanged);
         return () => { // cleanup on onmount
-            Logger.unregisterToChanges(onLogsChanged);
+            CiCAPI.log.unregisterToChanges(onLogsChanged);
         }
     }, []);
 
@@ -40,13 +43,13 @@ export default function RequestTimingPreview(props: IRequestTimingPreviewProps) 
             <span className="footer-label">Requests Timing: </span>
             <div className="centered-flex">
                 <span className="footer-label">nb requests:</span>
-                <span>{nbRequests}</span>
+                <span>{stats.network.entryCount}</span>
                 <span className="footer-label">last request: </span>
-                <span>{lastLogTime}</span>
+                <span>{Utils.millisToString(lastLogEntry && lastLogEntry.time || 0)}</span>
                 <span className="footer-label">avg: </span>
                 <span>{Utils.millisToString(avgTiming.min)} / {Utils.millisToString(avgTiming.avg)} / {Utils.millisToString(avgTiming.max)}</span>
                 <button className="request-full-timings-btn" onClick={() => props.onFullRequestClicked()}><FontAwesomeIcon icon={faBookDead} /></button>
-                <button className="request-timings-clear-btn" title="Clear Timings" onClick={() => Logger.reset()}><FontAwesomeIcon icon={faEraser} /></button>
+                <button className="request-timings-clear-btn" title="Clear Timings" onClick={() => CiCAPI.log.reset()}><FontAwesomeIcon icon={faEraser} /></button>
             </div>
         </div>
     );
