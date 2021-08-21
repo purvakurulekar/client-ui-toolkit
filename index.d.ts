@@ -62,17 +62,6 @@ interface ILogEntry {
     type: LOG_TYPE_ENUM;
 }
 
-
-declare class Logger {
-    registerToChanges(callback: Function): void;
-    unregisterToChanges(callback: Function): void;
-    getLogs(type?: LOG_TYPE_ENUM): Array<ILogEntry>;
-    getLastLog(type?: LOG_TYPE_ENUM): ILogEntry | null;
-    getAvgLogTimings(type?: LOG_TYPE_ENUM): IAvgTimings;
-    add(type: LOG_TYPE_ENUM, msg: string, time?: number, data?: string): void;
-    reset(): void;
-}
-
 declare class Utils {
     static degToRad(deg: number): number;
     static radToDeg(rad: number): number;
@@ -94,4 +83,4 @@ export function Loader(props: ILoaderProps): JSX.Element;
 export function Overlay(props: IOverlayProps): JSX.Element;
 export function PCSSniffer(): JSX.Element;
 export { SLIDER_DIRECTION };
-export { Logger, Utils }
+export { Utils }
