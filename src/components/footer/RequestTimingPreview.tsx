@@ -47,7 +47,8 @@ export default function RequestTimingPreview(props: IRequestTimingPreviewProps) 
                 <span className="footer-label">last request: </span>
                 <span>{Utils.millisToString(lastLogEntry && lastLogEntry.time || 0)}</span>
                 <span className="footer-label">avg: </span>
-                <span>{Utils.millisToString(avgTiming.min)} / {Utils.millisToString(avgTiming.avg)} / {Utils.millisToString(avgTiming.max)}</span>
+                {stats.network.entryCount > 0 && <span>{Utils.millisToString(avgTiming.min)} / {Utils.millisToString(avgTiming.avg)} / {Utils.millisToString(avgTiming.max)}</span>}
+                {stats.network.entryCount === 0 && <span> -- / -- / --</span>}
                 <button className="request-full-timings-btn" onClick={() => props.onFullRequestClicked()}><FontAwesomeIcon icon={faBookDead} /></button>
                 <button className="request-timings-clear-btn" title="Clear Timings" onClick={() => CiCAPI.log.reset()}><FontAwesomeIcon icon={faEraser} /></button>
             </div>

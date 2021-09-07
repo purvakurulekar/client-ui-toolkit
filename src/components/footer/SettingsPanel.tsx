@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-// import CiCAPI, { ConfigMap, ConfigValue } from "../../api/CiCAPI";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWindowClose } from "@fortawesome/free-regular-svg-icons";
 

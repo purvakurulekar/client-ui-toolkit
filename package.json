@@ -1,6 +1,6 @@
 {
   "name": "client-ui-toolkit",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "description": "Client UI Toolkit containing commonly usable components",
   "main": "index.js",
   "scripts": {
@@ -61,6 +61,7 @@
     "babel-loader": "^8.2.2",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "clean-webpack-plugin": "^4.0.0-alpha.0",
+    "client-test-dashboard": "^1.0.0",
     "copy-webpack-plugin": "^9.0.1",
     "css-loader": "^5.2.6",
     "fake-indexeddb": "^3.1.3",

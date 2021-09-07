@@ -8,7 +8,11 @@ import { faCog } from "@fortawesome/free-solid-svg-icons";
 import DataSourceControl from "./DataSourceControl";
 import CacheControl from "./CacheControl";
 import RequestTimingPreview from "./RequestTimingPreview";
-import LoggerRequestList from "./LoggerRequestList";
+
+import { Dashboard } from "client-test-dashboard";
+
+// import LoggerRequestList from "./LoggerRequestList";
+// now it's the dashboard lib
 
 interface IFooterProps {
     // dataSources: Array<string>,
@@ -42,7 +46,7 @@ export default function Footer(props: IFooterProps) {
             <CacheControl />
             <RequestTimingPreview onFullRequestClicked={handleFullRequestsClicked} />
             <button className={settingsClassNames.join(" ")} onClick={handleSettingsClicked}><FontAwesomeIcon icon={faCog} /></button>
-            {isFullRequestVisible && <LoggerRequestList />}
+            {isFullRequestVisible && <Dashboard />}
             {isShowingSettings && <SettingsPanel onClose={handleSettingsClicked} />}
         </footer>
     );
