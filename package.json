@@ -18,9 +18,6 @@
     "Toolkit",
     "Components"
   ],
-  "publishConfig": {
-    "registry": "http://cic-npmregistry-dev-ci.centralus.azurecontainer.io:4873/"
-  },
   "author": "Thomas Lanteigne",
   "license": "ISC",
   "babel": {
