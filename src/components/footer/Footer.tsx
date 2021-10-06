@@ -9,12 +9,8 @@ import RequestTimingPreview from "./RequestTimingPreview";
 
 import { Dashboard } from "client-test-dashboard";
 
-// import LoggerRequestList from "./LoggerRequestList";
-// now it's the dashboard lib
 
 interface IFooterProps {
-    // dataSources: Array<string>,
-    // onDataSourcesChanged: Function
     onSettingsToggled: Function
 }
 

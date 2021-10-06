@@ -1,6 +1,5 @@
 import Header from "components/header/Header";
 import Footer from "./components/footer/Footer";
-import DataSourceControl from "./components/footer/DataSourceControl";
 import SettingsPanel from "./components/footer/SettingsPanel";
 import Loader from "components/loader/Loader";
 import Overlay from "components/overlay/Overlay";
@@ -30,7 +29,6 @@ export {
     importCiCAPI,
     Header as TestAppHeader,
     Footer as TestAppFooter,
-    DataSourceControl,
     SettingsPanel,
     Loader,
     Overlay,

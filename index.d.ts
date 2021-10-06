@@ -77,7 +77,6 @@ export function importCiCAPI(url: string): Promise<void>;
 export function SlidingPanel(props:ISlidingPanelProps): JSX.Element;
 export function TestAppHeader(props:IHeaderProps): JSX.Element;
 export function TestAppFooter(props:IFooterProps): JSX.Element;
-export function DataSourceControl(): JSX.Element;
 export function SettingsPanel(props: ISettingsPanelProps): JSX.Element;
 export function Loader(props: ILoaderProps): JSX.Element;
 export function Overlay(props: IOverlayProps): JSX.Element;
