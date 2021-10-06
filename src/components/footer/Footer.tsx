@@ -4,8 +4,6 @@ import SettingsPanel from "./SettingsPanel";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
-
-import DataSourceControl from "./DataSourceControl";
 import CacheControl from "./CacheControl";
 import RequestTimingPreview from "./RequestTimingPreview";
 
@@ -42,7 +40,6 @@ export default function Footer(props: IFooterProps) {
 
     return (
         <footer className="footer">
-            <DataSourceControl />
             <CacheControl />
             <RequestTimingPreview onFullRequestClicked={handleFullRequestsClicked} />
             <button className={settingsClassNames.join(" ")} onClick={handleSettingsClicked}><FontAwesomeIcon icon={faCog} /></button>
