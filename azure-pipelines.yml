@@ -1,0 +1,45 @@
+# Node.js with webpack
+# Build a Node.js project using the webpack CLI.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+- stage: dev
+  displayName: Development
+  jobs:
+    - job: deploy
+      displayName: Build and Deploy Package
+      steps:
+        - checkout: self
+          submodules: true
+        - task: NodeTool@0
+          inputs:
+            versionSpec: "14.x"
+          displayName: "Install Node.js"
+        - script: |
+            rm -v package-lock.json
+        - task: Npm@1
+          inputs:
+            command: 'install'
+            customRegistry: useNpmrc
+        - bash: |
+            echo "Listing PreBuild... $stage_env $cicapi_url"
+            ls -la
+            echo "Listing PreBuild Complete!"
+          env:
+            stage_env: "dev"
+            cicapi_url: "$(cicapi_url_dev)"
+        - script: |
+            npm run build
+        - task: Npm@1
+          inputs:
+            command: publish
+            workingDir: dist/
+            publishRegistry: useFeed
+            publishFeed: Content Platform/content-platform-npm
