@@ -7,10 +7,8 @@ import { faCog } from "@fortawesome/free-solid-svg-icons";
 import CacheControl from "./CacheControl";
 import RequestTimingPreview from "./RequestTimingPreview";
 
-import { Dashboard } from "client-test-dashboard";
-
-
 interface IFooterProps {
+    children?: JSX.Element | Array<JSX.Element>,
     onSettingsToggled: Function
 }
 
@@ -39,7 +37,7 @@ export default function Footer(props: IFooterProps) {
             <CacheControl />
             <RequestTimingPreview onFullRequestClicked={handleFullRequestsClicked} />
             <button className={settingsClassNames.join(" ")} onClick={handleSettingsClicked}><FontAwesomeIcon icon={faCog} /></button>
-            {isFullRequestVisible && <Dashboard />}
+            {isFullRequestVisible && <div className="children-container">{props.children}</div>}
             {isShowingSettings && <SettingsPanel onClose={handleSettingsClicked} />}
         </footer>
     );

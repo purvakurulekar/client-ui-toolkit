@@ -19,6 +19,7 @@ interface IHeaderProps {
 }
 
 interface IFooterProps {
+    children?: JSX.Element | Array<JSX.Element>,
     onSettingsToggled: Function
 }
 
