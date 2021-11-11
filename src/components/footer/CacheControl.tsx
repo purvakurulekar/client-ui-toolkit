@@ -2,7 +2,6 @@ import Utils from "Utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEraser } from "@fortawesome/free-solid-svg-icons"
 import React, { useState, useRef, useEffect } from "react";
-import { stat } from "fs";
 
 const
     KIBIBYTES = 1024,
@@ -15,22 +14,27 @@ interface ICacheControlProps {
 //=============================================================================
 export default function CacheControl(props: ICacheControlProps) {
     let [isCacheDisabled, setCacheDisabled] = useState(true),
+        [isAppInsightEnabled, setAppInsightEnabled] = useState(true),
+        [isDisplayingReloadMsg, setDisplayingReloadMsg] = useState(false),
         [cacheSize, setCacheSize] = useState(0),
         networkCount = useRef(CiCAPI.log.getStats().network.entryCount),
-        label: string,
-        renderedCachedData;
+        renderedCachedData,
+        pageAppInsightEnabled: React.MutableRefObject<boolean> = useRef<boolean>(true);
 
     useEffect(() => {
-        let onLogsChanged = Utils.debounce(() => {
-            if (isCacheDisabled) {
-                let stats: ILoggerStats = CiCAPI.log.getStats();
-                if (networkCount.current !== stats.network.entryCount) {
-                    networkCount.current = stats.network.entryCount;
-                    setCacheSize(CiCAPI.cache.getCacheSize());
+        let appInsightEnabled: boolean = CiCAPI.getConfig("appInsight.enabled") as boolean,
+            onLogsChanged = Utils.debounce(() => {
+                if (isCacheDisabled) {
+                    let stats: ILoggerStats = CiCAPI.log.getStats();
+                    if (networkCount.current !== stats.network.entryCount) {
+                        networkCount.current = stats.network.entryCount;
+                        setCacheSize(CiCAPI.cache.getCacheSize());
+                    }
                 }
-            }
-        }, 500);
+            }, 500);
 
+        pageAppInsightEnabled.current = appInsightEnabled;
+        setAppInsightEnabled(appInsightEnabled);
         setCacheDisabled(!CiCAPI.cache.isCacheEnabled());
         setCacheSize(CiCAPI.cache.getCacheSize());
         // register to logger changes
@@ -47,18 +51,35 @@ export default function CacheControl(props: ICacheControlProps) {
         CiCAPI.cache.setCacheEnabled(!isCacheDisabled);
     }
 
-    label = "Disable Cache";
+    function handleAppInsightToggle(e: React.ChangeEvent<HTMLInputElement>) {
+        let isEnabled: boolean = e.target.checked;
+
+        if (pageAppInsightEnabled.current !== isEnabled) {
+            setDisplayingReloadMsg(true);
+        }
+        setAppInsightEnabled(isEnabled);
+        CiCAPI.setConfig("appInsight.enabled", isEnabled);
+    }
 
     if (!isCacheDisabled) {
         renderedCachedData = (<CachedData size={cacheSize} />);
     }
 
+    // appInsight.enabled
+
     return (
         <div className="footer-cache-control centered-flex">
             <div className="centered-flex">
                 <input id="enable-cache-toggle" type="checkbox" checked={isCacheDisabled} onChange={handleCacheToggle} />
-                <label htmlFor="enable-cache-toggle">{label}</label>
+                <label htmlFor="enable-cache-toggle">Disable Cache</label>
             </div>
+
+            <div className="centered-flex reload-msg-container">
+                {isDisplayingReloadMsg && <div className="reload-msg" onAnimationEnd={() => setDisplayingReloadMsg(false)}>Please Reload Page</div>}
+                <input id="appinsight-toggle" type="checkbox" checked={isAppInsightEnabled} onChange={handleAppInsightToggle} />
+                <label htmlFor="appinsight-toggle">Enable App Insight</label>
+            </div>
+
             {renderedCachedData}
         </div>
     );
