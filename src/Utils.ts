@@ -139,9 +139,9 @@ class Utils {
     //=============================================================================
     static debounce(funcToDebounce: Function, debounceTime: number): Function {
         let timeoutHandle: number;
-        return () => {
+        return function() {
             clearTimeout(timeoutHandle);
-            timeoutHandle = setTimeout(funcToDebounce, debounceTime);
+            timeoutHandle = setTimeout(() => funcToDebounce.apply(null, Array.from(arguments)), debounceTime) as any;
         }
     }
 }
