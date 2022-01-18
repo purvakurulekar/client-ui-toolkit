@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, CSSProperties } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGripLines, faGripLinesVertical } from "@fortawesome/free-solid-svg-icons";
+import { faGripLines, faGripLinesVertical, faCaretLeft, faCaretRight, faCaretDown, faCaretUp } from "@fortawesome/free-solid-svg-icons";
 import "./slidingPanel.scss";
 
 export enum SLIDER_DIRECTION {
@@ -12,8 +12,13 @@ export interface ISlidingPanelProps {
     className?: string,
     direction?: SLIDER_DIRECTION, // up or down
     initialDimension?: number,
+    minDimension?: number,
     configKey?: string,
-    children: any
+    disabled?: boolean,
+    children: any,
+    isCollapsable?: boolean
+    isCollapsed?: boolean
+    onCollapseToggle?(isCollapse: boolean): void
 }
 
 let onMouseMoveFunc: Function | null = null,
@@ -21,41 +26,41 @@ let onMouseMoveFunc: Function | null = null,
 
 export default function SlidingPanel(props: ISlidingPanelProps) {
     let [dimension, setDimension] = useState(props.initialDimension || "auto"),
-        // [isSliding, setSliding] = useState(false),
+        [isCollapsed, setCollapsed] = useState(Boolean(props.isCollapsed)),
         panelRef = useRef(),
         classNames = ["sliding-panel"],
-        icon,
-        style = {
+        resizerIcon,
+        collapseToggleIcon,
+        collapseToggleBtn,
+        style: CSSProperties = {
         },
-        draggerProps = {
-            onMouseDown: (e: React.MouseEvent) => {
-                let startAxisValue: number;
+        onMouseDown = (e: React.MouseEvent) => {
+            let startAxisValue: number;
 
-                // setSliding(true);
+            // setSliding(true);
 
-                if (onMouseUpFunc !== null || onMouseMoveFunc !== null) {
-                    window.removeEventListener("mousemove", onMouseMoveFunc as any);
-                    window.removeEventListener("mouseup", onMouseUpFunc as any);
-                }
-
-                if (props.direction === SLIDER_DIRECTION.vertical) {
-                    startAxisValue = e.clientY;
-                } else {
-                    startAxisValue = e.clientX;
-                }
-
-                if (dimension === "auto") {
-                    // @ts-ignore
-                    dimension = (panelRef.current as HTMLDivElement).getBoundingClientRect().height;
-                }
-
-                // @ts-ignore
-                onMouseMoveFunc = _windowMouseMoveFunc.bind(null, props.direction as string, startAxisValue, dimension, setDimension, panelRef.current);
-                onMouseUpFunc = _windowMouseUpFunc.bind(null);
-
-                window.addEventListener("mousemove", onMouseMoveFunc as any);
-                window.addEventListener("mouseup", onMouseUpFunc as any);
+            if (onMouseUpFunc !== null || onMouseMoveFunc !== null) {
+                window.removeEventListener("mousemove", onMouseMoveFunc as any);
+                window.removeEventListener("mouseup", onMouseUpFunc as any);
             }
+
+            if (props.direction === SLIDER_DIRECTION.vertical) {
+                startAxisValue = e.clientY;
+            } else {
+                startAxisValue = e.clientX;
+            }
+
+            if (dimension === "auto") {
+                // @ts-ignore
+                dimension = (panelRef.current as HTMLDivElement).getBoundingClientRect().height;
+            }
+
+            // @ts-ignore
+            onMouseMoveFunc = _windowMouseMoveFunc.bind(null, props.direction as string, startAxisValue, dimension, setDimension, panelRef.current);
+            onMouseUpFunc = _windowMouseUpFunc.bind(null);
+
+            window.addEventListener("mousemove", onMouseMoveFunc as any);
+            window.addEventListener("mouseup", onMouseUpFunc as any);
         };
 
     useEffect(() => {
@@ -70,6 +75,7 @@ export default function SlidingPanel(props: ISlidingPanelProps) {
                 setDimension(dimension);
             }
         }
+
         if (props.configKey) {
             CiCAPI.setConfig(props.configKey, dimension);
         }
@@ -81,20 +87,56 @@ export default function SlidingPanel(props: ISlidingPanelProps) {
 
     if (props.direction === SLIDER_DIRECTION.vertical) {
         Object.assign(style, { height: dimension + "px" });
-        icon = faGripLines;
+        resizerIcon = faGripLines;
         classNames.push("vertical-slider");
     } else {
         Object.assign(style, { width: dimension + "px" });
-        icon = faGripLinesVertical;
+        resizerIcon = faGripLinesVertical;
         classNames.push("horizontal-slider");
+    }
+
+    if (props.isCollapsable) {
+        let handleCollapseBtnClick = () => {
+            setCollapsed(!isCollapsed);
+            if (dimension <= 0 && props.initialDimension) {
+                setDimension(props.initialDimension);
+            }
+        };
+
+        if (props.direction === SLIDER_DIRECTION.vertical) {
+            if (isCollapsed) {
+                collapseToggleIcon = faCaretDown;
+            } else {
+                collapseToggleIcon = faCaretUp;
+            }
+        } else {
+            if (isCollapsed) {
+                collapseToggleIcon = faCaretRight;
+            } else {
+                collapseToggleIcon = faCaretLeft;
+            }
+        }
+
+        collapseToggleBtn = <button
+            className="sliding-panel-collapse-btn"
+            disabled={props.disabled}
+            onClick={handleCollapseBtnClick}>
+            <FontAwesomeIcon icon={collapseToggleIcon} />
+        </button>
+    }
+
+    if (isCollapsed) {
+        style.width = "0px";
+        style.minWidth = "0px";
     }
 
     return (
         <div className={classNames.join(" ")} ref={panelRef as any} style={style}>
-            <div className="sliding-panel-btn-container" {...draggerProps} >
-                <FontAwesomeIcon icon={icon} />
+            {collapseToggleBtn}
+            <div className="sliding-panel-btn-container" onMouseDown={onMouseDown} >
+                {!props.isCollapsable && <FontAwesomeIcon icon={resizerIcon} />}
             </div>
-            {props.children}
+            {!isCollapsed && props.children}
         </div>
     );
 }
@@ -110,13 +152,13 @@ function _windowMouseMoveFunc(direction: string, startValue: number, initialDime
         axisValue = e.clientY;
         newDimension = (initialDimension + startValue - axisValue);
         if (computedStyle.minHeight) {
-            newDimension = Math.max(parseInt(computedStyle.minHeight), newDimension);
+            newDimension = Math.max(parseInt(computedStyle.minHeight) || 0, newDimension);
         }
     } else {
         axisValue = e.clientX;
         newDimension = (initialDimension - (startValue - axisValue));
         if (computedStyle.minWidth) {
-            newDimension = Math.max(parseInt(computedStyle.minWidth), newDimension);
+            newDimension = Math.max(parseInt(computedStyle.minWidth) || 0, newDimension);
         }
     }
 

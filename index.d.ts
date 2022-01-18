@@ -1,3 +1,4 @@
+import { IQuaternion } from "./src/Utils"
 
 declare enum SLIDER_DIRECTION {
     vertical = "vertical",
@@ -8,8 +9,12 @@ interface ISlidingPanelProps {
     className?: string,
     direction?: SLIDER_DIRECTION, // up or down
     initialDimension?: number,
+    minDimension?: number,
     configKey?: string,
-    children: any
+    children: any,
+    isCollapsable?: boolean
+    isCollapsed?: boolean
+    onCollapseToggle?(isCollapse: boolean): void
 }
 
 interface IHeaderProps {
@@ -66,7 +71,7 @@ interface ILogEntry {
 declare class Utils {
     static degToRad(deg: number): number;
     static radToDeg(rad: number): number;
-    static eulerToQuaternion(eulerAngleInDeg: ILCVector3): IQuaternion;// pitch (x), roll (y), yaw (z)
+    static eulerToQuaternion(eulerAngleInDeg: Vector3): IQuaternion;// pitch (x), roll (y), yaw (z)
     static genGUID(): string;
     static genUUID(size: number): string;
     static cloneObj(object: Object): Object;

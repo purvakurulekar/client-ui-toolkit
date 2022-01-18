@@ -90,7 +90,7 @@ export default {
         ],
         extensions: [".tsx", ".ts", ".js"],
     },
-    devtool: "source-map",
+    devtool: "eval-source-map",
     plugins: [
         new CopyWebpackPlugin({
             patterns: [
