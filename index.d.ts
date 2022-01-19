@@ -5,15 +5,16 @@ declare enum SLIDER_DIRECTION {
     horizontal = "horizontal"
 }
 
-interface ISlidingPanelProps {
+export interface ISlidingPanelProps {
     className?: string,
     direction?: SLIDER_DIRECTION, // up or down
     initialDimension?: number,
     minDimension?: number,
     configKey?: string,
-    children: any,
-    isCollapsable?: boolean
-    isCollapsed?: boolean
+    children?: any,
+    isCollapsable?: boolean,
+    isCollapsed?: boolean,
+    isResizable?: boolean,
     onCollapseToggle?(isCollapse: boolean): void
 }
 

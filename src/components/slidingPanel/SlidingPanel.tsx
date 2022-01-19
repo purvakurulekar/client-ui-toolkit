@@ -16,8 +16,9 @@ export interface ISlidingPanelProps {
     configKey?: string,
     disabled?: boolean,
     children: any,
-    isCollapsable?: boolean
-    isCollapsed?: boolean
+    isResizable?: boolean,
+    isCollapsable?: boolean,
+    isCollapsed?: boolean,
     onCollapseToggle?(isCollapse: boolean): void
 }
 
@@ -29,11 +30,27 @@ export default function SlidingPanel(props: ISlidingPanelProps) {
         [isCollapsed, setCollapsed] = useState(Boolean(props.isCollapsed)),
         panelRef = useRef(),
         classNames = ["sliding-panel"],
+        isResizable: boolean = props.isResizable || props.isResizable === undefined,
         resizerIcon,
+        resizerWidget,
         collapseToggleIcon,
         collapseToggleBtn,
         style: CSSProperties = {
         },
+        onMouseDown: React.MouseEventHandler<HTMLDivElement> | undefined;
+
+    if (props.direction === SLIDER_DIRECTION.vertical) {
+        Object.assign(style, { height: dimension + "px" });
+        resizerIcon = faGripLines;
+        classNames.push("vertical-slider");
+    } else {
+        Object.assign(style, { width: dimension + "px" });
+        resizerIcon = faGripLinesVertical;
+        classNames.push("horizontal-slider");
+    }
+
+    if (isResizable) {
+        classNames.push("sliding-panel-resizable");
         onMouseDown = (e: React.MouseEvent) => {
             let startAxisValue: number;
 
@@ -62,6 +79,15 @@ export default function SlidingPanel(props: ISlidingPanelProps) {
             window.addEventListener("mousemove", onMouseMoveFunc as any);
             window.addEventListener("mouseup", onMouseUpFunc as any);
         };
+        resizerWidget = (
+            <div className="sliding-panel-btn-container" onMouseDown={onMouseDown}>
+                {!props.isCollapsable && <FontAwesomeIcon icon={resizerIcon} />}
+            </div>
+        );
+
+    } else {
+        classNames.push("sliding-panel-fixed");
+    }
 
     useEffect(() => {
         if (panelRef && panelRef.current) {
@@ -81,27 +107,30 @@ export default function SlidingPanel(props: ISlidingPanelProps) {
         }
     }, [dimension]);
 
+    useEffect(() => {
+        if (props.isCollapsed !== undefined) {
+            setCollapsed(props.isCollapsed)
+        }
+    }, [props.isCollapsed]);
+
     if (props.className) {
         classNames.push(props.className);
     }
 
-    if (props.direction === SLIDER_DIRECTION.vertical) {
-        Object.assign(style, { height: dimension + "px" });
-        resizerIcon = faGripLines;
-        classNames.push("vertical-slider");
-    } else {
-        Object.assign(style, { width: dimension + "px" });
-        resizerIcon = faGripLinesVertical;
-        classNames.push("horizontal-slider");
-    }
-
     if (props.isCollapsable) {
-        let handleCollapseBtnClick = () => {
-            setCollapsed(!isCollapsed);
-            if (dimension <= 0 && props.initialDimension) {
-                setDimension(props.initialDimension);
-            }
-        };
+        let collapseBtnKey: string,
+            handleCollapseBtnClick = () => {
+                let collapsedState: boolean = !isCollapsed;
+                setCollapsed(collapsedState);
+                
+                if (dimension <= 0 && props.initialDimension) {
+                    setDimension(props.initialDimension);
+                }
+
+                if (props.onCollapseToggle) {
+                    props.onCollapseToggle(collapsedState);
+                }
+            };
 
         if (props.direction === SLIDER_DIRECTION.vertical) {
             if (isCollapsed) {
@@ -117,7 +146,10 @@ export default function SlidingPanel(props: ISlidingPanelProps) {
             }
         }
 
+        collapseBtnKey = isCollapsed ? "collapse-closed" : "collapse-open";
+
         collapseToggleBtn = <button
+            key={collapseBtnKey}
             className="sliding-panel-collapse-btn"
             disabled={props.disabled}
             onClick={handleCollapseBtnClick}>
@@ -128,14 +160,15 @@ export default function SlidingPanel(props: ISlidingPanelProps) {
     if (isCollapsed) {
         style.width = "0px";
         style.minWidth = "0px";
+        classNames.push("sliding-panel-closed");
+    } else {
+        classNames.push("sliding-panel-opened");
     }
 
     return (
         <div className={classNames.join(" ")} ref={panelRef as any} style={style}>
             {collapseToggleBtn}
-            <div className="sliding-panel-btn-container" onMouseDown={onMouseDown} >
-                {!props.isCollapsable && <FontAwesomeIcon icon={resizerIcon} />}
-            </div>
+            {resizerWidget}
             {!isCollapsed && props.children}
         </div>
     );
