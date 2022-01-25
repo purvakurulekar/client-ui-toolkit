@@ -3,6 +3,7 @@ import Footer from "./components/footer/Footer";
 import SettingsPanel from "./components/footer/SettingsPanel";
 import Loader from "components/loader/Loader";
 import Overlay from "components/overlay/Overlay";
+import DropZone from "components/dropZone/DropZone";
 import SlidingPanel, { SLIDER_DIRECTION } from "components/slidingPanel/SlidingPanel";
 import PCSSniffer from "components/pcsSniffer/PCSSniffer";
 import Utils from "Utils";
@@ -32,6 +33,7 @@ export {
     SettingsPanel,
     Loader,
     Overlay,
+    DropZone,
     SlidingPanel,
     SLIDER_DIRECTION,
     PCSSniffer,

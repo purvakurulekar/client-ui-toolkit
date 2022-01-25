@@ -1,5 +1,10 @@
 import { IQuaternion } from "./src/Utils"
 
+interface IDropZoneProps {
+    onItemDrop(ev: React.DragEvent): void,
+    onLeave(ev: React.DragEvent): void
+}
+
 declare enum SLIDER_DIRECTION {
     vertical = "vertical",
     horizontal = "horizontal"
@@ -87,6 +92,7 @@ export function TestAppFooter(props:IFooterProps): JSX.Element;
 export function SettingsPanel(props: ISettingsPanelProps): JSX.Element;
 export function Loader(props: ILoaderProps): JSX.Element;
 export function Overlay(props: IOverlayProps): JSX.Element;
+export function DropZone(props: IDropZoneProps): JSX.Element;
 export function PCSSniffer(): JSX.Element;
 export { SLIDER_DIRECTION };
 export { Utils }
