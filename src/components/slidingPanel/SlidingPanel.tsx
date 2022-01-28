@@ -103,7 +103,7 @@ export default function SlidingPanel(props: ISlidingPanelProps) {
         }
 
         if (props.configKey) {
-            CiCAPI.setConfig(props.configKey, dimension);
+            localStorage.setItem(props.configKey, dimension.toString());
         }
     }, [dimension]);
 
