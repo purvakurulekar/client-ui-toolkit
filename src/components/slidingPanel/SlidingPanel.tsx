@@ -3,6 +3,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGripLines, faGripLinesVertical, faCaretLeft, faCaretRight, faCaretDown, faCaretUp } from "@fortawesome/free-solid-svg-icons";
 import "./slidingPanel.scss";
 
+const
+    STORAGE_COLLAPSED_SUFFIX = "-col";
+
 export enum SLIDER_DIRECTION {
     vertical = "vertical",
     horizontal = "horizontal"
@@ -26,8 +29,8 @@ let onMouseMoveFunc: Function | null = null,
     onMouseUpFunc: Function | null = null;
 
 export default function SlidingPanel(props: ISlidingPanelProps) {
-    let [dimension, setDimension] = useState(props.initialDimension || "auto"),
-        [isCollapsed, setCollapsed] = useState(Boolean(props.isCollapsed)),
+    let [dimension, setDimension] = useState(0), //(props.configKey && Number(localStorage.getItem(props.configKey))) || props.initialDimension || "auto"
+        [isCollapsed, setCollapsed] = useState(true), // props.isCollapsed !== undefined ? /true/.test(String(localStorage.getItem(props.configKey + STORAGE_COLLAPSED_SUFFIX))) : Boolean(props.isCollapsed)
         panelRef = useRef(),
         classNames = ["sliding-panel"],
         isResizable: boolean = props.isResizable || props.isResizable === undefined,
@@ -54,8 +57,6 @@ export default function SlidingPanel(props: ISlidingPanelProps) {
         onMouseDown = (e: React.MouseEvent) => {
             let startAxisValue: number;
 
-            // setSliding(true);
-
             if (onMouseUpFunc !== null || onMouseMoveFunc !== null) {
                 window.removeEventListener("mousemove", onMouseMoveFunc as any);
                 window.removeEventListener("mouseup", onMouseUpFunc as any);
@@ -67,10 +68,10 @@ export default function SlidingPanel(props: ISlidingPanelProps) {
                 startAxisValue = e.clientX;
             }
 
-            if (dimension === "auto") {
-                // @ts-ignore
-                dimension = (panelRef.current as HTMLDivElement).getBoundingClientRect().height;
-            }
+            // if (dimension === "auto") {
+            //     // @ts-ignore
+            //     dimension = (panelRef.current as HTMLDivElement).getBoundingClientRect().height;
+            // }
 
             // @ts-ignore
             onMouseMoveFunc = _windowMouseMoveFunc.bind(null, props.direction as string, startAxisValue, dimension, setDimension, panelRef.current);
@@ -90,28 +91,58 @@ export default function SlidingPanel(props: ISlidingPanelProps) {
     }
 
     useEffect(() => {
-        if (panelRef && panelRef.current) {
-            let boundingRect = (panelRef?.current as unknown as HTMLDivElement)?.getBoundingClientRect();
+        if (props.configKey) {
+            let storedWidth: number = Number(localStorage.getItem(props.configKey));
+            if (!isNaN(storedWidth)) {
+                setDimension(storedWidth);
+            } else if (props.initialDimension) {
+                setDimension(props.initialDimension);
+            }
 
-            if (props.direction === SLIDER_DIRECTION.vertical && boundingRect.height < dimension) {
-                dimension = Math.round(boundingRect.height);
-                setDimension(dimension);
-            } else if (boundingRect.width < dimension) {
-                dimension = Math.round(boundingRect.width);
-                setDimension(dimension);
+            let storedCollapsedState: string | null = localStorage.getItem(props.configKey + STORAGE_COLLAPSED_SUFFIX),
+                collapsedState: boolean;
+
+            if (storedCollapsedState !== null) {
+                collapsedState = /true/.test(storedCollapsedState);
+
+                setCollapsed(collapsedState);
+                if (props.onCollapseToggle) {
+                    props.onCollapseToggle(collapsedState);
+                }
+            } else {
+                collapsedState = true;
             }
         }
+    }, []);
 
-        if (props.configKey) {
-            localStorage.setItem(props.configKey, dimension.toString());
+    useEffect(() => {
+        let updatedDimension: number = Number(dimension);
+
+        if (updatedDimension > 0) {
+            if (panelRef && panelRef.current) {
+                let boundingRect = (panelRef?.current as unknown as HTMLDivElement)?.getBoundingClientRect();
+
+                if (props.direction === SLIDER_DIRECTION.vertical && boundingRect.height < dimension) {
+                    updatedDimension = Math.round(boundingRect.height);
+                } else if (boundingRect.width < dimension) {
+                    updatedDimension = Math.round(boundingRect.width);
+                }
+            }
+
+            if (props.configKey && !isCollapsed) {
+                localStorage.setItem(props.configKey, updatedDimension.toString());
+            }
+
+            setDimension(updatedDimension);
         }
     }, [dimension]);
 
-    useEffect(() => {
-        if (props.isCollapsed !== undefined) {
-            setCollapsed(props.isCollapsed)
-        }
-    }, [props.isCollapsed]);
+    // useEffect(() => {
+    //     console.log("UE CHANGED IS COLLAPSED: ", props.isCollapsed);
+    //     if (props.isCollapsed !== undefined) {
+    //         setCollapsed(props.isCollapsed)
+    //     }
+    // }, [props.isCollapsed]);
 
     if (props.className) {
         classNames.push(props.className);
@@ -120,12 +151,24 @@ export default function SlidingPanel(props: ISlidingPanelProps) {
     if (props.isCollapsable) {
         let collapseBtnKey: string,
             handleCollapseBtnClick = () => {
-                let collapsedState: boolean = !isCollapsed;
+                let collapsedState: boolean = !isCollapsed,
+                    dimensionToUse: number;
+
                 setCollapsed(collapsedState);
-                
-                if (dimension <= 0 && props.initialDimension) {
-                    setDimension(props.initialDimension);
+
+                if (dimension <= 0) {
+                    if (props.configKey && localStorage.hasOwnProperty(props.configKey)) {
+                        dimensionToUse = Number(localStorage.getItem(props.configKey));
+                    } else {
+                        dimensionToUse = props.initialDimension || Number(dimension);
+                    }
+
+                    if (dimensionToUse) {
+                        setDimension(dimensionToUse);
+                    }
                 }
+
+                localStorage.setItem(props.configKey + STORAGE_COLLAPSED_SUFFIX, collapsedState.toString());
 
                 if (props.onCollapseToggle) {
                     props.onCollapseToggle(collapsedState);
