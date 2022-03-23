@@ -56,3 +56,19 @@
         cursor: pointer;
     }
 }
+
+.sliding-panel-collapse-btn {
+    position: absolute;
+    top: 4px;
+    // top: 0;
+    // bottom: 0;
+    // margin: auto;
+    height: 22px;
+    font-size: 10px;
+    right: -8px;
+    z-index: 3;
+    width: 12px;
+    font-size: 16px;
+    text-align: center;
+    color: #000;
+}

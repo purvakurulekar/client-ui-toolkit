@@ -1,5 +1,9 @@
-// import ILCVector3 from "./interfaces/ILCVector3";
-// import IQuaternion from "./interfaces/IQuaternion";
+export interface IQuaternion {
+    x: number,
+    y: number,
+    z: number,
+    w: number
+}
 
 const
     SECONDS_MS = 1000,
@@ -25,8 +29,8 @@ class Utils {
 
     // pitch (x), roll (y), yaw (z)
     //=============================================================================
-    static eulerToQuaternion(eulerAngleInDeg: ILCVector3): IQuaternion {
-        let [halfXRot, halfYRot, halfZRot] = [this.degToRad(eulerAngleInDeg.x) / 2, this.degToRad(eulerAngleInDeg.y) / 2, this.degToRad(eulerAngleInDeg.z) / 2];
+    static eulerToQuaternion(eulerAngleInDeg: Vector3): IQuaternion {
+        let [halfXRot, halfYRot, halfZRot] = [this.degToRad(eulerAngleInDeg[0]) / 2, this.degToRad(eulerAngleInDeg[1]) / 2, this.degToRad(eulerAngleInDeg[1]) / 2];
         let [
             cosPitch,
             sinPitch,
@@ -139,9 +143,9 @@ class Utils {
     //=============================================================================
     static debounce(funcToDebounce: Function, debounceTime: number): Function {
         let timeoutHandle: number;
-        return () => {
+        return function() {
             clearTimeout(timeoutHandle);
-            timeoutHandle = setTimeout(funcToDebounce, debounceTime);
+            timeoutHandle = setTimeout(() => funcToDebounce.apply(null, Array.from(arguments)), debounceTime) as any;
         }
     }
 }
