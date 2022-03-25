@@ -1,0 +1,32 @@
+.settings-button-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+.settings-btn {
+    position: absolute;
+    top: 2px;
+    right: 6px;
+    z-index: 1;
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 14px;
+}
+
+.settings-btn:hover {
+    svg {
+        color: #c86400;
+        transform: rotate(360deg);
+        transition: 1.5s;
+    }
+}
+
+@media (max-device-width: 640px) {
+    .settings-button-container {
+        width: calc(100% - 10px);
+    }
+}

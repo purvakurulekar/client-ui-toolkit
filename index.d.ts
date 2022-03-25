@@ -82,6 +82,13 @@ interface ISwitchToggleProps {
     onChange(ev: React.ChangeEvent<HTMLInputElement>): void;
 }
 
+interface ISettingsButton {
+    onClick?(): void,
+    onOpen?(): void,
+    onClose?(): void
+    children?: any
+}
+
 declare class Utils {
     static degToRad(deg: number): number;
     static radToDeg(rad: number): number;
@@ -103,5 +110,6 @@ export function Overlay(props: IOverlayProps): JSX.Element;
 export function DropZone(props: IDropZoneProps): JSX.Element;
 export function PCSSniffer(): JSX.Element;
 export function SwitchToggle(props: ISwitchToggleProps): JSX.Element;
+export function SettingsButton(props: ISettingsButton): JSX.Element;
 export { SLIDER_DIRECTION };
 export { Utils }

@@ -7,6 +7,7 @@ import DropZone from "components/dropZone/DropZone";
 import SlidingPanel, { SLIDER_DIRECTION } from "components/slidingPanel/SlidingPanel";
 import PCSSniffer from "components/pcsSniffer/PCSSniffer";
 import SwitchToggle from "components/switchToggle/SwitchToggle";
+import SettingsButton from "components/settingsButton/SettingsButton";
 import Utils from "Utils";
 
 const CICAPI_FILENAME: string = "cicapi.web.js";
@@ -39,5 +40,6 @@ export {
     SLIDER_DIRECTION,
     PCSSniffer,
     SwitchToggle,
+    SettingsButton,
     Utils
 };
