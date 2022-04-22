@@ -29,8 +29,8 @@ let onMouseMoveFunc: Function | null = null,
     onMouseUpFunc: Function | null = null;
 
 export default function SlidingPanel(props: ISlidingPanelProps) {
-    let [dimension, setDimension] = useState(props.initialDimension || 0), //(props.configKey && Number(localStorage.getItem(props.configKey))) || props.initialDimension || "auto"
-        [isCollapsed, setCollapsed] = useState(Boolean(props.isCollapsed)), // props.isCollapsed !== undefined ? /true/.test(String(localStorage.getItem(props.configKey + STORAGE_COLLAPSED_SUFFIX))) : Boolean(props.isCollapsed)
+    let [dimension, setDimension] = useState((props.configKey && Number(localStorage.getItem(props.configKey))) || props.initialDimension || 0),
+        [isCollapsed, setCollapsed] = useState(props.isCollapsed !== undefined ? /true/.test(String(localStorage.getItem(props.configKey + STORAGE_COLLAPSED_SUFFIX))) : Boolean(props.isCollapsed)), // 
         panelRef = useRef(),
         classNames = ["sliding-panel"],
         isResizable: boolean = props.isResizable || props.isResizable === undefined,
